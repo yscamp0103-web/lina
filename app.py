@@ -83,24 +83,13 @@ section[data-testid="stSidebar"] * {
     color: #ffffff;
     margin-bottom: 8px;
 }
-
-.customer-rank {
-    display: inline-block;
-    background: #e8d5b0;
-    color: #0a0a0a;
-    font-weight: 700;
-    font-size: 0.75rem;
-    padding: 2px 10px;
-    border-radius: 20px;
-    margin-left: 8px;
-}
-
 .customer-info {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.85);
     font-size: 0.9rem;
     margin-top: 8px;
     line-height: 1.8;
 }
+
 
 .stButton > button {
     background: #e8d5b0 !important;
