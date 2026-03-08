@@ -15,6 +15,127 @@ supabase: Client = create_client(
     os.getenv("SUPABASE_KEY")
 )
 
+# カスタムCSS
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.stApp {
+    background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
+}
+
+h1 {
+    background: linear-gradient(90deg, #ff9dc4, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    text-align: center;
+}
+
+.stApp > header {
+    background: transparent;
+}
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #2d1b4e, #1a0a2e);
+    border-right: 1px solid #ff9dc4;
+}
+
+section[data-testid="stSidebar"] * {
+    color: #ffd700 !important;
+}
+
+.customer-card {
+    background: linear-gradient(135deg, rgba(255,157,196,0.15), rgba(255,215,0,0.1));
+    border: 1px solid rgba(255,157,196,0.4);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+}
+
+.customer-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 8px;
+}
+
+.customer-rank {
+    display: inline-block;
+    background: linear-gradient(90deg, #ff9dc4, #ffd700);
+    color: #1a0a2e;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 2px 10px;
+    border-radius: 20px;
+    margin-left: 8px;
+}
+
+.customer-info {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    line-height: 1.8;
+}
+
+.stButton > button {
+    background: linear-gradient(90deg, #ff9dc4, #ffd700) !important;
+    color: #1a0a2e !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 0.5rem 2rem !important;
+    width: 100%;
+}
+
+.stButton > button:hover {
+    opacity: 0.85 !important;
+    transform: translateY(-1px);
+}
+
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea,
+.stNumberInput > div > div > input,
+.stSelectbox > div > div {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,157,196,0.4) !important;
+    color: white !important;
+    border-radius: 10px !important;
+}
+
+.stMarkdown p {
+    color: rgba(255,255,255,0.85);
+}
+
+.reply-box {
+    background: rgba(255,157,196,0.08);
+    border: 1px solid rgba(255,157,196,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+    color: white;
+    white-space: pre-wrap;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+.section-title {
+    color: #ff9dc4;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255,157,196,0.3);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # 顧客データの読み込み
 def load_customers():
     res = supabase.table("customers").select("*").execute()
@@ -65,8 +186,8 @@ def generate_reply(customer, situation):
     return message.content[0].text
 
 # メイン
-st.title("Lina")
-st.caption("キャバ嬢向けLINE営業AI支援ツール")
+st.title("💕 Lina")
+st.markdown('<p style="text-align:center; color:rgba(255,255,255,0.6); margin-top:-16px;">キャバ嬢向けLINE営業AI支援ツール</p>', unsafe_allow_html=True)
 
 menu = st.sidebar.selectbox("メニュー", ["顧客一覧", "顧客追加", "AI返信生成"])
 
@@ -74,7 +195,7 @@ customers = load_customers()
 
 # 顧客追加
 if menu == "顧客追加":
-    st.header("顧客追加")
+    st.markdown('<div class="section-title">✨ 顧客追加</div>', unsafe_allow_html=True)
     name = st.text_input("名前")
     age = st.number_input("年齢", min_value=0, max_value=100, value=30)
     job = st.text_input("職業")
@@ -85,7 +206,7 @@ if menu == "顧客追加":
     ng = st.text_input("苦手なこと")
     appearance = st.text_area("見た目・特徴メモ")
 
-    if st.button("保存"):
+    if st.button("保存する"):
         new_customer = {
             "name": name,
             "age": age,
@@ -99,25 +220,33 @@ if menu == "顧客追加":
             "visits": []
         }
         save_customer(new_customer)
-        st.success(f"{name}さんを追加しました")
+        st.success(f"✅ {name}さんを追加しました")
 
 # 顧客一覧
 if menu == "顧客一覧":
-    st.header("顧客一覧")
+    st.markdown('<div class="section-title">👑 顧客一覧</div>', unsafe_allow_html=True)
     if not customers:
         st.info("顧客がまだいません。顧客追加から登録してください。")
     else:
-        for i, c in enumerate(customers):
-            st.subheader(f"{c['name']} ({c['rank']})")
-            st.write(f"年齢：{c['age']}　職業：{c['job']}")
-            st.write(f"最終来店日：{c['last_visit']}")
-            st.write(f"好きな話題：{c['topics']}")
-            st.write(f"特徴：{c['appearance']}")
-            st.divider()
+        for c in customers:
+            st.markdown(f"""
+            <div class="customer-card">
+                <div class="customer-name">
+                    {c['name']}
+                    <span class="customer-rank">{c['rank']}</span>
+                </div>
+                <div class="customer-info">
+                    🎂 {c['age']}歳　💼 {c['job']}<br>
+                    📅 最終来店：{c['last_visit']}<br>
+                    💬 好きな話題：{c.get('topics', 'ー')}<br>
+                    ✨ 特徴：{c.get('appearance', 'ー')}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 # AI返信生成
 if menu == "AI返信生成":
-    st.header("AI返信生成")
+    st.markdown('<div class="section-title">🤖 AI返信生成</div>', unsafe_allow_html=True)
     if not customers:
         st.info("まず顧客を追加してください。")
     else:
@@ -136,7 +265,12 @@ if menu == "AI返信生成":
         if situation == "E. 受信メッセージへの返信":
             received_message = st.text_area("受信したメッセージを入力")
 
-        if st.button("返信を生成する"):
+        if st.button("返信を生成する ✨"):
             with st.spinner("生成中..."):
                 reply = generate_reply(selected_customer, situation)
-            st.markdown(reply)
+            
+            patterns = reply.split("【パターン")
+            for i, pattern in enumerate(patterns[1:], 1):
+                text = pattern.split("】", 1)[-1].strip()
+                st.markdown(f"**【パターン{i}】**")
+                st.code(text, language=None)
