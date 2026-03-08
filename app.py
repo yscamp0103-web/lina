@@ -18,7 +18,7 @@ supabase: Client = create_client(
 # カスタムCSS
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Noto+Sans+JP:wght@400;700&display=swap');
 
 html, body, [class*="css"] {
     font-family: 'Noto Sans JP', sans-serif;
@@ -37,16 +37,48 @@ section[data-testid="stSidebar"] * {
     color: #ffffff !important;
 }
 
+.logo-container {
+    text-align: center;
+    padding: 40px 0 30px 0;
+}
+
+.logo-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 4rem;
+    color: #e8d5b0;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin: 0;
+}
+
+.logo-line {
+    width: 200px;
+    height: 1px;
+    background: #e8d5b0;
+    margin: 12px auto;
+    opacity: 0.6;
+}
+
+.logo-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #888888;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+}
+
 .customer-card {
     background: #1a1a1a;
-    border: 1px solid #333333;
-    border-radius: 16px;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
     padding: 20px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .customer-name {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #ffffff;
     margin-bottom: 8px;
@@ -57,14 +89,14 @@ section[data-testid="stSidebar"] * {
     background: #e8d5b0;
     color: #0a0a0a;
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     padding: 2px 10px;
     border-radius: 20px;
     margin-left: 8px;
 }
 
 .customer-info {
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.6);
     font-size: 0.9rem;
     margin-top: 8px;
     line-height: 1.8;
@@ -94,17 +126,18 @@ section[data-testid="stSidebar"] * {
     border-radius: 10px !important;
 }
 
-.stMarkdown p {
-    color: rgba(255,255,255,0.85);
+.stMarkdown p, label, .stSelectbox label {
+    color: rgba(255,255,255,0.85) !important;
 }
 
 .section-title {
     color: #e8d5b0;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    border-bottom: 1px solid #333333;
-    padding-bottom: 8px;
-    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -159,9 +192,13 @@ def generate_reply(customer, situation):
     return message.content[0].text
 
 # メイン
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.image("logo.png", use_container_width=True)
+st.markdown("""
+<div class="logo-container">
+    <div class="logo-title">Lina</div>
+    <div class="logo-line"></div>
+    <div class="logo-sub">AI Messaging Assistant</div>
+</div>
+""", unsafe_allow_html=True)
 
 menu = st.sidebar.selectbox("メニュー", ["顧客一覧", "顧客追加", "AI返信生成"])
 
