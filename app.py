@@ -25,51 +25,37 @@ html, body, [class*="css"] {
 }
 
 .stApp {
-    background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
-}
-
-h1 {
-    background: linear-gradient(90deg, #ff9dc4, #ffd700);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 2.5rem !important;
-    font-weight: 700 !important;
-    text-align: center;
-}
-
-.stApp > header {
-    background: transparent;
+    background: #0a0a0a;
 }
 
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #2d1b4e, #1a0a2e);
-    border-right: 1px solid #ff9dc4;
+    background: #111111;
+    border-right: 1px solid #333333;
 }
 
 section[data-testid="stSidebar"] * {
-    color: #ffd700 !important;
+    color: #ffffff !important;
 }
 
 .customer-card {
-    background: linear-gradient(135deg, rgba(255,157,196,0.15), rgba(255,215,0,0.1));
-    border: 1px solid rgba(255,157,196,0.4);
+    background: #1a1a1a;
+    border: 1px solid #333333;
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 16px;
-    backdrop-filter: blur(10px);
 }
 
 .customer-name {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #ffd700;
+    color: #ffffff;
     margin-bottom: 8px;
 }
 
 .customer-rank {
     display: inline-block;
-    background: linear-gradient(90deg, #ff9dc4, #ffd700);
-    color: #1a0a2e;
+    background: #e8d5b0;
+    color: #0a0a0a;
     font-weight: 700;
     font-size: 0.8rem;
     padding: 2px 10px;
@@ -78,15 +64,15 @@ section[data-testid="stSidebar"] * {
 }
 
 .customer-info {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.7);
     font-size: 0.9rem;
     margin-top: 8px;
     line-height: 1.8;
 }
 
 .stButton > button {
-    background: linear-gradient(90deg, #ff9dc4, #ffd700) !important;
-    color: #1a0a2e !important;
+    background: #e8d5b0 !important;
+    color: #0a0a0a !important;
     font-weight: 700 !important;
     border: none !important;
     border-radius: 25px !important;
@@ -96,15 +82,14 @@ section[data-testid="stSidebar"] * {
 
 .stButton > button:hover {
     opacity: 0.85 !important;
-    transform: translateY(-1px);
 }
 
 .stTextInput > div > div > input,
 .stTextArea > div > div > textarea,
 .stNumberInput > div > div > input,
 .stSelectbox > div > div {
-    background: rgba(255,255,255,0.05) !important;
-    border: 1px solid rgba(255,157,196,0.4) !important;
+    background: #1a1a1a !important;
+    border: 1px solid #333333 !important;
     color: white !important;
     border-radius: 10px !important;
 }
@@ -113,23 +98,11 @@ section[data-testid="stSidebar"] * {
     color: rgba(255,255,255,0.85);
 }
 
-.reply-box {
-    background: rgba(255,157,196,0.08);
-    border: 1px solid rgba(255,157,196,0.3);
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 12px;
-    color: white;
-    white-space: pre-wrap;
-    font-size: 0.95rem;
-    line-height: 1.8;
-}
-
 .section-title {
-    color: #ff9dc4;
+    color: #e8d5b0;
     font-size: 1.3rem;
     font-weight: 700;
-    border-bottom: 1px solid rgba(255,157,196,0.3);
+    border-bottom: 1px solid #333333;
     padding-bottom: 8px;
     margin-bottom: 16px;
 }
@@ -189,6 +162,7 @@ def generate_reply(customer, situation):
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("logo.png", use_container_width=True)
+
 menu = st.sidebar.selectbox("メニュー", ["顧客一覧", "顧客追加", "AI返信生成"])
 
 customers = load_customers()
@@ -268,7 +242,7 @@ if menu == "AI返信生成":
         if st.button("返信を生成する ✨"):
             with st.spinner("生成中..."):
                 reply = generate_reply(selected_customer, situation)
-            
+
             patterns = reply.split("【パターン")
             for i, pattern in enumerate(patterns[1:], 1):
                 text = pattern.split("】", 1)[-1].strip()
