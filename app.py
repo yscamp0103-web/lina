@@ -120,7 +120,7 @@ section[data-testid="stSidebar"] * {
 }
 
 .section-title {
-    color: #e8d5b0;
+    color: #ffffff;
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 0.05em;
