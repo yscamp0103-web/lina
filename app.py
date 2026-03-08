@@ -186,9 +186,9 @@ def generate_reply(customer, situation):
     return message.content[0].text
 
 # メイン
-st.title("💕 Lina")
-st.markdown('<p style="text-align:center; color:rgba(255,255,255,0.6); margin-top:-16px;">キャバ嬢向けLINE営業AI支援ツール</p>', unsafe_allow_html=True)
-
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    st.image("logo.png", use_container_width=True)
 menu = st.sidebar.selectbox("メニュー", ["顧客一覧", "顧客追加", "AI返信生成"])
 
 customers = load_customers()
