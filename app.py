@@ -15,6 +15,8 @@ supabase: Client = create_client(
     os.getenv("SUPABASE_KEY")
 )
 
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+
 # カスタムCSS
 st.markdown("""
 <style>
@@ -67,6 +69,19 @@ section[data-testid="stSidebar"] * {
     color: #888888;
     letter-spacing: 0.25em;
     text-transform: uppercase;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 60px auto;
+    text-align: center;
+}
+
+.login-desc {
+    color: #888888;
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+    line-height: 1.8;
 }
 
 .customer-card {
@@ -140,16 +155,97 @@ section[data-testid="stSidebar"] * {
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
+
+.user-info {
+    color: #888888;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 10px 0;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# 顧客データの読み込み
+# ロゴ
+st.markdown("""
+<div class="logo-container">
+    <div class="logo-title">Lina</div>
+    <div class="logo-line"></div>
+    <div class="logo-sub">AI Messaging Assistant</div>
+</div>
+""", unsafe_allow_html=True)
+
+# URLパラメータからcodeを取得（OAuth callback）
+params = st.query_params
+code = params.get("code")
+
+# セッション状態の初期化
+if "user" not in st.session_state:
+    st.session_state.user = None
+
+# OAuthコールバック処理
+if code and not st.session_state.user:
+    try:
+        session = supabase.auth.exchange_code_for_session({"auth_code": code})
+        st.session_state.user = session.user
+        st.query_params.clear()
+        st.rerun()
+    except Exception as e:
+        st.error(f"認証エラー: {e}")
+
+# 未ログイン時
+if not st.session_state.user:
+    st.markdown("""
+    <div class="login-container">
+        <div class="login-desc">
+            Googleアカウントでログインして<br>
+            AI LINE営業支援ツールをご利用ください
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    google_auth_url = (
+        f"{SUPABASE_URL}/auth/v1/authorize"
+        f"?provider=google"
+        f"&redirect_to=https://lina-m81v.onrender.com"
+    )
+
+    st.markdown(f"""
+    <div style="text-align:center; margin-top: 20px;">
+        <a href="{google_auth_url}" style="
+            display: inline-block;
+            background: #e8d5b0;
+            color: #0a0a0a;
+            font-weight: 700;
+            padding: 14px 40px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+        ">Googleでログイン</a>
+    </div>
+    """, unsafe_allow_html=True)
+    st.stop()
+
+# ログイン済み
+user = st.session_state.user
+user_email = user.email if user else ""
+
+# サイドバー
+st.sidebar.markdown(f'<div class="user-info">👤 {user_email}</div>', unsafe_allow_html=True)
+if st.sidebar.button("ログアウト"):
+    supabase.auth.sign_out()
+    st.session_state.user = None
+    st.rerun()
+
+menu = st.sidebar.selectbox("メニュー", ["顧客一覧", "顧客追加", "AI返信生成"])
+
+# 顧客データ（ユーザーごと）
 def load_customers():
-    res = supabase.table("customers").select("*").execute()
+    res = supabase.table("customers").select("*").eq("user_id", user.id).execute()
     return res.data
 
-# 顧客データの保存
 def save_customer(customer):
+    customer["user_id"] = user.id
     supabase.table("customers").insert(customer).execute()
 
 # AI返信生成
@@ -191,17 +287,6 @@ def generate_reply(customer, situation):
         messages=[{"role": "user", "content": prompt}]
     )
     return message.content[0].text
-
-# メイン
-st.markdown("""
-<div class="logo-container">
-    <div class="logo-title">Lina</div>
-    <div class="logo-line"></div>
-    <div class="logo-sub">AI Messaging Assistant</div>
-</div>
-""", unsafe_allow_html=True)
-
-menu = st.sidebar.selectbox("メニュー", ["顧客一覧", "顧客追加", "AI返信生成"])
 
 customers = load_customers()
 
